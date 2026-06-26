@@ -2,22 +2,5 @@ spring:
   application:
     name: chat
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/talkie?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: true
-    show-sql: true
-
-  jwt:
-    secret: ${JWT_SECRET}
-    access-token-expiration: ${JWT_ACCESS_EXPIRATION}
-    refresh-token-expiration: ${JWT_REFRESH_EXPIRATION}
+  profiles:
+    active: local
