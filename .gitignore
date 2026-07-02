@@ -32,9 +32,6 @@ application-local.properties
 application-secret.yml
 application-secret.properties
 
-# OMC (oh-my-claudecode)
-.omc/
-
 # Compiled class files
 *.class
 
