@@ -62,8 +62,8 @@ public class AuthService {
     }
 
     public TokenResponse reissue(String refreshToken) {
-        if (!jwtProvider.isValid(refreshToken)) {
-            throw new IllegalArgumentException("만료된 토큰입니다.");
+        if (!jwtProvider.isValid(refreshToken) || !jwtProvider.isRefreshToken(refreshToken)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
 
         Long extractUserId = jwtProvider.extractUserId(refreshToken);
@@ -81,8 +81,8 @@ public class AuthService {
     }
 
     public void logout(String token) {
-        if (!jwtProvider.isValid(token)) {
-            throw new IllegalArgumentException("만료된 토큰입니다.");
+        if (!jwtProvider.isValid(token) || !jwtProvider.isRefreshToken(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
 
         Long extractUserId = jwtProvider.extractUserId(token);

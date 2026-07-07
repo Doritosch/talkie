@@ -30,6 +30,7 @@ public class JwtProvider {
     public String generateAccessToken(Long userId) {
         return Jwts.builder()
                 .subject(String.valueOf(userId))
+                .claim("type", "access")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(key)
@@ -39,6 +40,7 @@ public class JwtProvider {
     public String generateRefreshToken(Long userId) {
         return Jwts.builder()
                 .subject(String.valueOf(userId))
+                .claim("type", "refresh")
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(key)
@@ -68,6 +70,14 @@ public class JwtProvider {
 
     public long getRefreshTokenExpiration() {
         return refreshTokenExpiration;
+    }
+
+    public boolean isAccessToken(String token) {
+        return "access".equals(getClaims(token).get("type"));
+    }
+
+    public boolean isRefreshToken(String token) {
+        return "refresh".equals(getClaims(token).get("type"));
     }
 }
 
