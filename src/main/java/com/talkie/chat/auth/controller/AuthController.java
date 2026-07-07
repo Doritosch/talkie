@@ -4,6 +4,7 @@ import com.talkie.chat.auth.dto.LoginRequest;
 import com.talkie.chat.auth.dto.SignupRequest;
 import com.talkie.chat.auth.dto.TokenResponse;
 import com.talkie.chat.auth.service.AuthService;
+import com.talkie.chat.auth.utils.CookieUtil;
 import com.talkie.chat.user.dto.UserResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,10 +31,7 @@ public class AuthController {
     public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse http) {
         TokenResponse response = authService.login(request);
 
-        Cookie cookie = new Cookie("REFRESH_TOKEN", response.refreshToken());
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        http.addCookie(cookie);
+        CookieUtil.createCookie(http, response.refreshToken());
 
         return ResponseEntity.ok(new TokenResponse(response.accessToken(), null));
     }
@@ -52,10 +50,7 @@ public class AuthController {
         }
 
         TokenResponse reissuedResponse = authService.reissue(refreshToken);
-        Cookie cookie = new Cookie("REFRESH_TOKEN", reissuedResponse.refreshToken());
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        CookieUtil.createCookie(response, reissuedResponse.refreshToken());
 
         return ResponseEntity.ok(new TokenResponse(reissuedResponse.accessToken(), null));
     }
@@ -73,10 +68,7 @@ public class AuthController {
             }
         }
 
-        Cookie cookie = new Cookie("REFRESH_TOKEN", null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        CookieUtil.deleteCookie(response);
         authService.logout(refreshToken);
 
         return ResponseEntity.noContent().build();
