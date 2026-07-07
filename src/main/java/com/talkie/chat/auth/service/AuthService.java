@@ -9,6 +9,7 @@ import com.talkie.chat.user.dto.UserResponse;
 import com.talkie.chat.user.entity.User;
 import com.talkie.chat.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,13 +30,17 @@ public class AuthService {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
 
-        User user = new User(
-                request.name(),
-                passwordEncoder.encode(request.password()),
-                request.email(),
-                request.nickname(),
-                null);
-        return UserResponse.from(userRepository.save(user));
+        try {
+            User user = new User(
+                    request.name(),
+                    passwordEncoder.encode(request.password()),
+                    request.email(),
+                    request.nickname(),
+                    null);
+            return UserResponse.from(userRepository.save(user));
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("이미 사용중인 이메일입니다.", e);
+        }
     }
 
     @Transactional
