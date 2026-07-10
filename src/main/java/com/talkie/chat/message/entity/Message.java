@@ -1,0 +1,44 @@
+package com.talkie.chat.message.entity;
+
+import com.talkie.chat.room.entity.Room;
+import com.talkie.chat.user.entity.User;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Getter
+@Table(name = "message")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
+public class Message {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String content;
+    @CreatedDate
+    private LocalDateTime createdAt;
+    private LocalDateTime deletedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Room room;
+
+    public Message(String content, User user, Room room) {
+        this.content = content;
+        this.user = user;
+        this.room = room;
+    }
+
+    public void deleteMessage() {
+        this.deletedAt = LocalDateTime.now();
+    }
+}
