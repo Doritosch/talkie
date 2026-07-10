@@ -30,6 +30,17 @@ public class RoomService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("없는 유저입니다."));
 
+        if (roomType == RoomType.GROUP) {
+            if (roomName == null) {
+                throw new IllegalArgumentException("그룹 채팅은 방 이름이 필수입니다.");
+            }
+        } else {
+            if (roomName == null) {
+                User inviteUser = userRepository.findById(memberIds.get(0))
+                        .orElseThrow(() -> new IllegalArgumentException("없는 유저입니다."));
+                roomName = inviteUser.getNickname();
+            }
+        }
         Room room = new Room(roomName, roomType);
         Room createdRoom = roomRepository.save(room);
 
@@ -39,6 +50,9 @@ public class RoomService {
         List<User> members = userRepository.findAllById(memberIds);
         List<RoomMember> roomMembers = new ArrayList<>();
         for(User member : members) {
+            if (member.getId().equals(userId)) {
+                continue;
+            }
             roomMembers.add(new RoomMember(Role.MEMBER, member, createdRoom));
         }
         roomMemberRepository.saveAll(roomMembers);
