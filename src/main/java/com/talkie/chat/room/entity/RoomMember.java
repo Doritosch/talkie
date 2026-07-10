@@ -22,6 +22,7 @@ public class RoomMember {
 
     @CreatedDate
     private LocalDateTime joinedAt;
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private Long lastReadMessageId;

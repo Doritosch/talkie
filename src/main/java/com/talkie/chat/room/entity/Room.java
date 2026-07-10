@@ -20,6 +20,7 @@ public class Room {
     private Long id;
 
     private String roomName;
+    @Enumerated(EnumType.STRING)
     private RoomType roomType;
 
     @CreatedDate
