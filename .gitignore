@@ -35,6 +35,9 @@ application-secret.properties
 # OMC (oh-my-claudecode)
 .omc/
 
+# Personal notes
+TIL.md
+
 # Compiled class files
 *.class
 
