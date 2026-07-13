@@ -23,7 +23,9 @@
             stompClient.subscribe('/topic/rooms/1', function (message) {
                 log('받은 메시지: ' + message.body);
             });
-            stompClient.send('/app/rooms/1/send', {}, JSON.stringify({ content: '안녕!' }));
+            stompClient.send('/app/rooms/1/send', {}, JSON.stringify({content: '안녕!'}));
+        }, function (error) {
+            log('연결 실패: ' + error);
         });
     }
 

@@ -1,6 +1,9 @@
 package com.talkie.chat.message.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public record ChatMessageRequest(
-        String content
+        @NotBlank @Size(max = 500) String content
 ) {
 }

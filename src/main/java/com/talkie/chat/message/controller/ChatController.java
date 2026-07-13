@@ -3,6 +3,7 @@ package com.talkie.chat.message.controller;
 import com.talkie.chat.message.dto.ChatMessageRequest;
 import com.talkie.chat.message.dto.MessageResponse;
 import com.talkie.chat.message.service.MessageService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -22,7 +23,7 @@ public class ChatController {
     private final MessageService messageService;
 
     @MessageMapping("/rooms/{roomId}/send")
-    public void sendMessage(@DestinationVariable Long roomId, @Payload ChatMessageRequest request, Principal principal) {
+    public void sendMessage(@DestinationVariable Long roomId, @Valid @Payload ChatMessageRequest request, Principal principal) {
         Long userId = Long.parseLong(principal.getName());
         MessageResponse messageResponse = messageService.saveMessage(userId, roomId, request.content());
         messagingTemplate.convertAndSend("/topic/rooms/" + roomId, messageResponse);
