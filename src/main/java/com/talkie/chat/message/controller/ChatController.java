@@ -31,14 +31,20 @@ public class ChatController {
     public void sendMessage(@DestinationVariable Long roomId, @Valid @Payload ChatMessageRequest request, Principal principal) {
         Long userId = Long.parseLong(principal.getName());
         MessageResponse messageResponse = messageService.saveMessage(userId, roomId, request.content());
-
         ChatMessage chatMessage = new ChatMessage(roomId, messageResponse);
 
+        String json;
         try {
-            String json = objectMapper.writeValueAsString(chatMessage);
+            json = objectMapper.writeValueAsString(chatMessage);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("메시지 직렬화 실패", e);
+        }
+
+        // TODO: publish 실패 시 재시도/보정 전략 필요 (DB 저장은 완료된 상태)
+        try {
             redisPublisher.publish(channelTopic, json);
         } catch (Exception e) {
-            throw new IllegalArgumentException("유효하지 않은 메시지입니다.");
+            throw new IllegalArgumentException("메시지 발행 실패", e);
         }
     }
 
