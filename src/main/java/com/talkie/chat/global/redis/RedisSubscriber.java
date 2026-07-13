@@ -22,7 +22,7 @@ public class RedisSubscriber implements MessageListener {
             Long roomId = chatMessage.roomId();
             messagingTemplate.convertAndSend("/topic/rooms/" + roomId, chatMessage.message());
         } catch (Exception e) {
-            throw new IllegalArgumentException("유효하지 않은 메시지입니다.");
+            throw new IllegalArgumentException("유효하지 않은 메시지입니다.", e);
         }
     }
 }
