@@ -21,7 +21,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/signup", "/api/auth/login",
-                                "/api/auth/reissue", "/api/auth/logout").permitAll()
+                                "/api/auth/reissue", "/api/auth/logout",
+                                "/test.html", "/ws-talkie/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
