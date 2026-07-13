@@ -5,9 +5,11 @@ import com.talkie.chat.message.dto.MessageResponse;
 import com.talkie.chat.message.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
@@ -24,5 +26,11 @@ public class ChatController {
         Long userId = Long.parseLong(principal.getName());
         MessageResponse messageResponse = messageService.saveMessage(userId, roomId, request.content());
         messagingTemplate.convertAndSend("/topic/rooms/" + roomId, messageResponse);
+    }
+
+    @MessageExceptionHandler(IllegalArgumentException.class)
+    @SendToUser("/queue/errors")
+    public String handleException(IllegalArgumentException e) {
+        return e.getMessage();
     }
 }
