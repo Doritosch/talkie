@@ -41,8 +41,6 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
-    ports:
-      - "8080:8080"
     restart: unless-stopped
 
   app2:
@@ -58,8 +56,6 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
-    ports:
-      - "8081:8080"
     restart: unless-stopped
 
   nginx:
