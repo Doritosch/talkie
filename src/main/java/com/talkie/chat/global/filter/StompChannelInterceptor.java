@@ -8,7 +8,11 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -25,12 +29,11 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             if (token != null && token.startsWith("Bearer ")) {
                 token = token.substring(7);
             }
-            if (jwtProvider.isValid(token) && jwtProvider.isAccessToken(token)) {
-                Long userId = jwtProvider.extractUserId(token);
-                accessor.setUser(() -> String.valueOf(userId));
-            } else {
-                throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
-            }
+
+            jwtProvider.extractValidateUserId(token, "access")
+                    .ifPresentOrElse(userId -> accessor.setUser(() -> String.valueOf(userId)),
+                            () -> { throw new IllegalArgumentException("유효하지 않은 토큰입니다."); }
+                    );
         }
         return message;
     }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtProvider {
@@ -78,6 +79,18 @@ public class JwtProvider {
 
     public boolean isRefreshToken(String token) {
         return "refresh".equals(getClaims(token).get("type"));
+    }
+
+    public Optional<Long> extractValidateUserId(String token, String expectedType) {
+        try {
+            Claims claims = getClaims(token);
+            if (!expectedType.equals(claims.get("type"))) {
+                return Optional.empty();
+            }
+            return Optional.of(Long.valueOf(claims.getSubject()));
+        } catch (JwtException | IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 }
 
