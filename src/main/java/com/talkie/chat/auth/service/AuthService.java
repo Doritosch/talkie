@@ -29,6 +29,9 @@ public class AuthService {
         if (userRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
+        if (userRepository.existsByNickname(request.nickname())) {
+            throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
+        }
 
         try {
             User user = new User(
@@ -39,7 +42,7 @@ public class AuthService {
                     null);
             return UserResponse.from(userRepository.save(user));
         } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("이미 사용중인 이메일입니다.", e);
+            throw new IllegalArgumentException("이미 사용 중인 이메일 또는 닉네임입니다.", e);
         }
     }
 
