@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +21,10 @@ public class MessageController {
     private final MessageService messageService;
 
     @GetMapping("/rooms/{roomId}/messages")
-    public ResponseEntity<List<MessageResponse>> getMessages(@PathVariable Long roomId, @RequestParam(required = false) Long cursor,
-                                                       @RequestParam(defaultValue = "30") @Min(1) @Max(100) int size) {
-        List<MessageResponse> messageResponses = messageService.findMessagesByRoomId(roomId, cursor, size);
+    public ResponseEntity<List<MessageResponse>> getMessages(@AuthenticationPrincipal Long userId,
+                                                             @PathVariable Long roomId, @RequestParam(required = false) Long cursor,
+                                                             @RequestParam(defaultValue = "30") @Min(1) @Max(100) int size) {
+        List<MessageResponse> messageResponses = messageService.findMessagesByRoomId(userId, roomId, cursor, size);
         return ResponseEntity.ok(messageResponses);
     }
 }

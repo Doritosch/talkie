@@ -29,7 +29,10 @@ public class MessageService {
         return MessageResponse.from(savedMessage);
     }
 
-    public List<MessageResponse> findMessagesByRoomId(Long roomId, Long cursor, int size) {
+    public List<MessageResponse> findMessagesByRoomId(Long userId, Long roomId, Long cursor, int size) {
+        if (!roomMemberRepository.existsByUserIdAndRoomId(userId, roomId)) {
+            throw new IllegalArgumentException("채팅방 멤버가 아닙니다.");
+        }
 
         List<Message> findMessages;
         if (cursor == null) {
