@@ -45,8 +45,4 @@ public class MessageService {
                 .map(MessageResponse::from)
                 .toList();
     }
-    public Message findMessageEntity(Long id) {
-        return messageRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("메시지를 찾을 수 없습니다."));
-    }
 }
