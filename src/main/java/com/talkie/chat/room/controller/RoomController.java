@@ -3,6 +3,7 @@ package com.talkie.chat.room.controller;
 import com.talkie.chat.room.dto.RoomCreateRequest;
 import com.talkie.chat.room.dto.RoomResponse;
 import com.talkie.chat.room.service.RoomService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class RoomController {
     private final RoomService roomService;
 
     @PostMapping
-    public ResponseEntity<RoomResponse> createRoom(@AuthenticationPrincipal Long userId, @RequestBody RoomCreateRequest request) {
+    public ResponseEntity<RoomResponse> createRoom(@AuthenticationPrincipal Long userId, @Valid @RequestBody RoomCreateRequest request) {
         RoomResponse roomResponse = roomService.createRoom(userId, request.roomName(), request.roomType(), request.memberIds());
         return ResponseEntity.status(HttpStatus.CREATED).body(roomResponse);
     }
