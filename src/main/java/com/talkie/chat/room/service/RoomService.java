@@ -65,16 +65,10 @@ public class RoomService {
     }
 
     public List<RoomResponse> getMyRooms(Long userId) {
-        List<RoomMember> roomMemberList = roomMemberRepository.findByUserId(userId);
-
-        List<RoomResponse> roomResponses = new ArrayList<>();
-        for(RoomMember roomMember : roomMemberList) {
-            int countMember = roomMemberRepository.countByRoomId(roomMember.getRoom().getId());
-            RoomResponse roomResponse = new RoomResponse(roomMember.getRoom().getId(), roomMember.getRoom().getRoomName(),
-                    roomMember.getRoom().getRoomType(), countMember);
-            roomResponses.add(roomResponse);
-        }
-        return roomResponses;
+        return roomMemberRepository.findRoomsWithMemberCountByUserId(userId)
+                .stream()
+                .map(row -> new RoomResponse((Long) row[0], (String) row[1], (RoomType) row[2], ((Long) row[3]).intValue()))
+                .toList();
     }
 
     @Transactional
