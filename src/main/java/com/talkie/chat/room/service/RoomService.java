@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -76,6 +77,15 @@ public class RoomService {
         Room room = findByRoomId(roomId);
         RoomMember roomMember = roomMemberRepository.findByUserIdAndRoomId(userId, room.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 방의 회원이 아닙니다."));
+
+        if (roomMember.getRole() == Role.OWNER) {
+            Optional<RoomMember> nextOwner = roomMemberRepository.findOldestMemberByRoomId(roomId);
+            if (nextOwner.isPresent()) {
+                nextOwner.get().changeRole(Role.OWNER);
+            } else {
+                room.delete();
+            }
+        }
         roomMemberRepository.delete(roomMember);
     }
     private Room findByRoomId(Long roomId) {

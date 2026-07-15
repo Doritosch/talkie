@@ -43,4 +43,7 @@ public class RoomMember {
     public void updateLastReadMessageId(Long messageId) {
         this.lastReadMessageId = messageId;
     }
+    public void changeRole(Role role) {
+        this.role = role;
+    }
 }

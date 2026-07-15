@@ -18,4 +18,7 @@ public interface RoomMemberRepository extends JpaRepository<RoomMember, Long> {
 
     @Query("SELECT COUNT(rm) > 0 FROM RoomMember rm WHERE rm.user.id = :userId AND rm.room.id = :roomId")
     boolean existsByUserIdAndRoomId(@Param("userId") Long userId, @Param("roomId") Long roomId);
+
+    @Query("SELECT rm FROM RoomMember rm WHERE rm.room.id = :roomId AND rm.role = 'MEMBER' ORDER BY rm.joinedAt ASC LIMIT 1")
+    Optional<RoomMember> findOldestMemberByRoomId(@Param("roomId") Long roomId);
 }
