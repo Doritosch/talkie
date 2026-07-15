@@ -47,7 +47,12 @@ public class RoomService {
         RoomMember roomOwner = new RoomMember(Role.OWNER, user, createdRoom);
         roomMemberRepository.save(roomOwner);
 
-        List<User> members = userRepository.findAllById(memberIds);
+        List<Long> requestIds = memberIds.stream().distinct().toList();
+        List<User> members = userRepository.findAllById(requestIds);
+        if (members.size() != requestIds.size()) {
+            throw new IllegalArgumentException("존재하지 않는 초대 대상이 있습니다.");
+        }
+
         List<RoomMember> roomMembers = new ArrayList<>();
         for(User member : members) {
             if (member.getId().equals(userId)) {
@@ -56,7 +61,7 @@ public class RoomService {
             roomMembers.add(new RoomMember(Role.MEMBER, member, createdRoom));
         }
         roomMemberRepository.saveAll(roomMembers);
-        return new RoomResponse(createdRoom.getId(), createdRoom.getRoomName(), createdRoom.getRoomType(), members.size() + 1);
+        return RoomResponse.from(createdRoom, roomMembers.size() + 1);
     }
 
     public List<RoomResponse> getMyRooms(Long userId) {
